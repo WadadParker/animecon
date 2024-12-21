@@ -3,7 +3,7 @@
 import { Router } from 'express';
 import { authenticate } from 'passport';
 const authRouter = Router();
-import { getAuthenticatedUser } from '../controllers/authController';
+import { getAuthenticatedUser } from '../controllers/authController.js';
 
 // 1. Register User via GoogleAuth
 authRouter.get('/google',

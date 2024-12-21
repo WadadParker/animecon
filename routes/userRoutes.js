@@ -2,8 +2,8 @@
 
 import { Router } from 'express';
 const userRouter = Router();
-import { checkPaymentStatus, updatePaymentStatus, getUserDetails, scratchAnimeCard } from '../controllers/userController';
-import { verifyToken } from '../middleware/jwtMiddleware';
+import { checkPaymentStatus, updatePaymentStatus, getUserDetails, scratchAnimeCard } from '../controllers/userController.js';
+import { verifyToken } from '../middleware/jwtMiddleware.js';
 
 // Apply JWT middleware to all routes in this router
 userRouter.use(verifyToken);

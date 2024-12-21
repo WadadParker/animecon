@@ -1,7 +1,7 @@
 // middleware/jwtMiddleware.js
 
 import { verify } from 'jsonwebtoken';
-import { user as _user } from '../prismaClient';
+import { user as _user } from '../prismaClient.js';
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;

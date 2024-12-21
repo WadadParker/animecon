@@ -2,8 +2,8 @@
 
 import { Router } from 'express';
 const adminRouter = Router();
-import { createPoll, createPollOption, getAllPolls } from '../controllers/adminController';
-import { verifyToken, ensureAdmin } from '../middleware/jwtMiddleware';
+import { createPoll, createPollOption, getAllPolls } from '../controllers/adminController.js';
+import { verifyToken, ensureAdmin } from '../middleware/jwtMiddleware.js';
 
 // Apply JWT and Admin middleware to all routes in this router
 adminRouter.use(verifyToken, ensureAdmin);

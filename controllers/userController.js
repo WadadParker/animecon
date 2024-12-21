@@ -3,10 +3,10 @@
 const prisma = require('../prismaClient');
 
 // 2. Check whether user has paid or not
-exports.checkPaymentStatus = async (req, res) => {
+ async function checkPaymentStatus(req, res) {
   try {
     const userId = req.user.id;
-    const payment = await prisma.payment.findFirst({
+    const payment = await payment.findFirst({
       where: {
         userId: userId,
         status: 'VERIFIED',
@@ -16,10 +16,10 @@ exports.checkPaymentStatus = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 // 3. Update user value to paid
-exports.updatePaymentStatus = async (req, res) => {
+ async function updatePaymentStatus(req, res) {
   try {
     const userId = req.user.id;
     const { status, paymentMethod, screenshotUrl } = req.body;
@@ -43,12 +43,12 @@ exports.updatePaymentStatus = async (req, res) => {
       userId: userId,
     };
 
-    const updatedPayment = await prisma.payment.create({
+    const updatedPayment = await _payment.create({
       data: paymentData,
     });
 
     if (updatedPayment.status === 'VERIFIED') {
-      await prisma.user.update({
+      await _user.update({
         where: { id: userId },
         data: { isVerified: true },
       });
@@ -58,13 +58,13 @@ exports.updatePaymentStatus = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 // 4. Get user's details
-exports.getUserDetails = async (req, res) => {
+ async function getUserDetails(req, res) {
   try {
     const userId = req.user.id;
-    const user = await prisma.user.findUnique({
+    const user = await user.findUnique({
       where: { id: userId },
       select: {
         id: true,
@@ -80,10 +80,10 @@ exports.getUserDetails = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 // 5. Scratch the anime card
-exports.scratchAnimeCard = async (req, res) => {
+ async function scratchAnimeCard(req, res) {
   try {
     const userId = req.user.id;
     const { animeIds } = req.body; // Expecting an array of anime IDs
@@ -93,7 +93,7 @@ exports.scratchAnimeCard = async (req, res) => {
     }
 
     // Validate animeIds
-    const validAnimes = await prisma.anime.findMany({
+    const validAnimes = await _anime.findMany({
       where: { id: { in: animeIds } },
       select: { id: true },
     });
@@ -106,7 +106,7 @@ exports.scratchAnimeCard = async (req, res) => {
     }
 
     // Create entries in UserAnime
-    const userAnimes = await prisma.userAnime.createMany({
+    const userAnimes = await userAnimes.createMany({
       data: animeIds.map((animeId) => ({
         userId: userId,
         animeId: animeId,
@@ -118,4 +118,8 @@ exports.scratchAnimeCard = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
+
+module.exports = {
+    checkPaymentStatus,updatePaymentStatus,getUserDetails,scratchAnimeCard
+}

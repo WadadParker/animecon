@@ -1,9 +1,9 @@
 // auth.js
 
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const prisma = require('./prismaClient');
-const jwt = require('jsonwebtoken');
+import { use, serializeUser, deserializeUser } from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { user as _user } from './prismaClient';
+import { sign, verify } from 'jsonwebtoken';
 require('dotenv').config();
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -11,7 +11,7 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Configure Google Strategy
-passport.use(new GoogleStrategy({
+use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
     callbackURL: "/auth/google/callback",
@@ -23,12 +23,12 @@ passport.use(new GoogleStrategy({
       const email = emails[0].value;
 
       // Find or create user in the database
-      let user = await prisma.user.findUnique({
+      let user = await _user.findUnique({
         where: { googleId: id },
       });
 
       if (!user) {
-        user = await prisma.user.create({
+        user = await _user.create({
           data: {
             name: displayName,
             email: email,
@@ -38,7 +38,7 @@ passport.use(new GoogleStrategy({
       }
 
       // Generate JWT
-      const token = jwt.sign(
+      const token = sign(
         { userId: user.id, isAdmin: user.isAdmin },
         JWT_SECRET,
         { expiresIn: '1h' } // Token expires in 1 hour
@@ -52,14 +52,14 @@ passport.use(new GoogleStrategy({
 ));
 
 // No need for serializeUser and deserializeUser in JWT-based auth
-passport.serializeUser((user, done) => {
+serializeUser((user, done) => {
   done(null, user.token);
 });
 
-passport.deserializeUser(async (token, done) => {
+deserializeUser(async (token, done) => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    const decoded = verify(token, JWT_SECRET);
+    const user = await _user.findUnique({ where: { id: decoded.userId } });
     done(null, user);
   } catch (error) {
     done(error, null);

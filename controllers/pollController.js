@@ -1,9 +1,9 @@
 // controllers/pollController.js
 
-const prisma = require('../prismaClient');
+import { poll as _poll, pollOption as _pollOption, pollAnswer as _pollAnswer } from '../prismaClient.js';
 
 // 8. Answer a Poll
-exports.answerPoll = async (req, res) => {
+ async function answerPoll(req, res) {
   try {
     const userId = req.user.id;
     const { pollId } = req.params;
@@ -14,7 +14,7 @@ exports.answerPoll = async (req, res) => {
     }
 
     // Check if the poll exists
-    const poll = await prisma.poll.findUnique({
+    const poll = await _poll.findUnique({
       where: { id: parseInt(pollId) },
     });
 
@@ -23,7 +23,7 @@ exports.answerPoll = async (req, res) => {
     }
 
     // Check if the poll option belongs to the poll
-    const pollOption = await prisma.pollOption.findUnique({
+    const pollOption = await _pollOption.findUnique({
       where: { id: parseInt(pollOptionId) },
     });
 
@@ -32,7 +32,7 @@ exports.answerPoll = async (req, res) => {
     }
 
     // Create PollAnswer
-    const pollAnswer = await prisma.pollAnswer.create({
+    const pollAnswer = await _pollAnswer.create({
       data: {
         userId: userId,
         pollId: parseInt(pollId),
@@ -48,15 +48,15 @@ exports.answerPoll = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   }
-};
+}
 
 // 9. Get if Poll is answered by User
-exports.checkPollAnswered = async (req, res) => {
+ async function checkPollAnswered(req, res) {
   try {
     const userId = req.user.id;
     const { pollId } = req.params;
 
-    const pollAnswer = await prisma.pollAnswer.findUnique({
+    const pollAnswer = await _pollAnswer.findUnique({
       where: {
         unique_user_poll: {
           userId: userId,
@@ -69,4 +69,8 @@ exports.checkPollAnswered = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
+
+module.exports = {
+    answerPoll,checkPollAnswered
+}

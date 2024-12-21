@@ -1,9 +1,9 @@
 // controllers/adminController.js
 
-const prisma = require('../prismaClient');
+import { poll as _poll, pollOption as _pollOption } from '../prismaClient.js';
 
 // 6. Create Polls
-exports.createPoll = async (req, res) => {
+ async function createPoll(req, res) {
   try {
     const { question } = req.body;
     const createdById = req.user.id; // Assuming the admin is the creator
@@ -12,7 +12,7 @@ exports.createPoll = async (req, res) => {
       return res.status(400).json({ message: 'Question is required' });
     }
 
-    const poll = await prisma.poll.create({
+    const poll = await _poll.create({
       data: {
         question: question,
         createdById: createdById,
@@ -23,10 +23,10 @@ exports.createPoll = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 // 7. Create Poll Options
-exports.createPollOption = async (req, res) => {
+ async function createPollOption(req, res) {
   try {
     const { pollId } = req.params;
     const { optionText } = req.body;
@@ -36,7 +36,7 @@ exports.createPollOption = async (req, res) => {
     }
 
     // Check if the poll exists
-    const poll = await prisma.poll.findUnique({
+    const poll = await _poll.findUnique({
       where: { id: parseInt(pollId) },
     });
 
@@ -44,7 +44,7 @@ exports.createPollOption = async (req, res) => {
       return res.status(404).json({ message: 'Poll not found' });
     }
 
-    const pollOption = await prisma.pollOption.create({
+    const pollOption = await _pollOption.create({
       data: {
         optionText: optionText,
         pollId: parseInt(pollId),
@@ -55,12 +55,12 @@ exports.createPollOption = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 // 10. Get all Polls (Admin)
-exports.getAllPolls = async (req, res) => {
+ async function getAllPolls(req, res) {
   try {
-    const polls = await prisma.poll.findMany({
+    const polls = await _poll.findMany({
       include: {
         options: true,
         createdBy: {
@@ -73,4 +73,8 @@ exports.getAllPolls = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
+
+module.exports = {
+    createPoll,createPollOption,getAllPolls
+}

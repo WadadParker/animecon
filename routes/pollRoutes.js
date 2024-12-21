@@ -2,8 +2,8 @@
 
 import { Router } from 'express';
 const pollRouter = Router();
-import { answerPoll, checkPollAnswered } from '../controllers/pollController';
-import { verifyToken } from '../middleware/jwtMiddleware';
+import { answerPoll, checkPollAnswered } from '../controllers/pollController.js';
+import { verifyToken } from '../middleware/jwtMiddleware.js';
 
 // Apply JWT middleware
 pollRouter.use(verifyToken);
