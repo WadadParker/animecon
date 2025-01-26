@@ -1,28 +1,15 @@
 {
   "name": "animecon",
-  "version": "1.0.0",
-  "main": "index.js",
-  "type": "module",
+  "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "bun run --watch src/index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@prisma/client": "^6.1.0",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0",
-    "postgres": "^3.4.5"
+    "elysia": "latest"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9",
-    "prisma": "^6.1.0"
-  }
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
 }
