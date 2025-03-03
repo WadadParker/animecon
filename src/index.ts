@@ -3,10 +3,9 @@ import { userRoutes } from "./routes/users.routes";
 
 const app = new Elysia()
 
-.get("/", () => "Hello Elysia")
-
-.use(userRoutes)
-.listen(3000);
+  .get("/", () => "Hello Elysia")
+  .use(userRoutes)
+  .listen(3000);
 
 
 console.log(
