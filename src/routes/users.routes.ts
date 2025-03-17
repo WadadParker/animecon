@@ -1,5 +1,8 @@
 import Elysia, { t } from "elysia";
 import { sql } from "bun";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = Bun.env.JWT_SECRET || "This_is_JWT_secret";
 
 export const userRoutes =
 new Elysia( {prefix:"users"} )
@@ -8,7 +11,7 @@ new Elysia( {prefix:"users"} )
         set.headers["access-control-allow-methods"] = "POST","GET";
         set.headers["access-control-allow-origin"] = "*";
         set.headers["access-control-allow-headers"] = 'Content-Type, Origin, Accept, Authorization ';
-        
+
         return set
     })
     .post("/signup", async ({set,body})=>{
@@ -34,7 +37,9 @@ new Elysia( {prefix:"users"} )
                 `
                 set.status = 200
         
-                return { message: "User created Succesfully!" , jwt:result[0]}
+                const token = jwt.sign({userId: result[0].user_id}, JWT_SECRET , {expiresIn: "7d"})
+
+                return { message: "User created Succesfully!" , jwt:token}
         } 
         catch (error: any) {
             // PostgreSQL unique constraint error code is typically "23505"
@@ -74,8 +79,10 @@ new Elysia( {prefix:"users"} )
                 console.log("This is result",result[0])
                 if(result[0])
                 {
+                    const token = jwt.sign({userId: result[0].user_id}, JWT_SECRET , {expiresIn: "7d"})
+
                     set.status = 200
-                    return { message: "User Logged In" , jwt:result[0] , paid:result[0]?.paid}
+                    return { message: "User Logged In" , jwt:token , paid:result[0]?.paid}
                 }
 
                 set.status = 400
