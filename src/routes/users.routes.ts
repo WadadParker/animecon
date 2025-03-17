@@ -30,17 +30,18 @@ new Elysia( {prefix:"users"} )
                 VALUES (${name}, ${email} , ${password} )
                 RETURNING user_id , email
                 `
-        
-
                 set.status = 200
-                console.log("THis is body",body)
         
                 return { message: "User created Succesfully!" , jwt:result[0]}
         } catch (error: any) {
             // PostgreSQL unique constraint error code is typically "23505"
+            if(error?.errno == 23505){
             console.log("Error happened",error)
             set.status = 403;
-            return { error: "Email already exists" };
+            return { error: "Email already exists" };}
+
+            set.status = 422;
+            return { error: "DB Operation Failed" }
           }
     
 
