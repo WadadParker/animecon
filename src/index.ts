@@ -1,5 +1,8 @@
 import { Elysia } from "elysia";
+import { initDB } from "./db/db";
 import { userRoutes } from "./routes/users.routes";
+
+initDB();
 
 const app = new Elysia()
 
